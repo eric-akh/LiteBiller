@@ -22,14 +22,20 @@ namespace LiteBiller.Core.Presenters
             {
                 CustomerName = _view.CustomerName,
                 InvoiceDate = _view.InvoiceDate,
-                Items = _view.InvoiceItems
+                Items = _view.InvoiceItems,
+                DiscountPercent = _view.DiscountPercent,
+                TaxPercent = _view.TaxPercent
             };
 
-            var invoiceId = _repository.SaveInvoice(invoice);
-            _view.SetInvoiceId(invoiceId);
-            _view.SetInvoiceNumber(invoice.InvoiceNo);
-            _view.ShowMessage($"Invoice INV-{invoice.InvoiceNo:D6} saved successfully.");
+            _view.UpdateTotals(invoice);
+
+            var savedInvoice = _repository.SaveInvoice(invoice);
+
+            _view.SetInvoiceId(savedInvoice.InvoiceId);
+            _view.SetInvoiceNumber(savedInvoice.InvoiceNo);
+            _view.ShowMessage($"Invoice INV-{savedInvoice.InvoiceNo:D6} saved successfully.");
             _view.ResetForm();
         }
+
     }
 }

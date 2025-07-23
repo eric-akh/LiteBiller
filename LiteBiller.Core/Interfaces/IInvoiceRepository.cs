@@ -9,6 +9,6 @@ namespace LiteBiller.Core.Interfaces
 {
     public interface IInvoiceRepository
     {
-        Guid SaveInvoice(Invoice invoice);
+        Invoice SaveInvoice(Invoice invoice);
     }
 }

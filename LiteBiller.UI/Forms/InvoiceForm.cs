@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 using LiteBiller.Core.Interfaces;
 using LiteBiller.Core.Models;
@@ -14,11 +15,13 @@ namespace LiteBiller.UI.Forms
         private List<InvoiceItem> _invoiceItems = new List<InvoiceItem>();
         private Guid _invoiceId = new Guid();
         private long _invoiceNo = 0;
+        private readonly ErrorProvider _errorProvider = new ErrorProvider();
 
         public InvoiceForm()
         {
             InitializeComponent();
             _presenter = new InvoicePresenter(this, new InvoiceRepository());
+            dtpInvoiceDate.Value = DateTime.Now;
             SetupDataGridView();
         }
 
@@ -36,6 +39,9 @@ namespace LiteBiller.UI.Forms
         }
 
         public List<InvoiceItem> InvoiceItems => _invoiceItems;
+
+        public decimal DiscountPercent => nudDiscount.Value;
+        public decimal TaxPercent => nudTax.Value;
 
         public event EventHandler SaveInvoiceClicked;
 
@@ -58,10 +64,10 @@ namespace LiteBiller.UI.Forms
             UpdateTotalLabels();
         }
 
-        public void UpdateTotals(decimal subtotal, decimal total)
+        public void UpdateTotals(Invoice invoice)
         {
-            lblSubtotal.Text = $"Subtotal: {subtotal:C}";
-            lblTotal.Text = $"Total: {total:C}";
+            lblSubtotal.Text = $"Subtotal: {invoice.Subtotal:C}";
+            lblTotal.Text = $"Total: {invoice.Total:C}";
         }
 
         public void ShowMessage(string message, MessageBoxIcon icon = MessageBoxIcon.Information)
@@ -151,12 +157,14 @@ namespace LiteBiller.UI.Forms
 
         private void UpdateTotalLabels()
         {
-            decimal subtotal = 0;
-            foreach (var item in _invoiceItems)
+            var invoice = new Invoice
             {
-                subtotal += item.Total;
-            }
-            UpdateTotals(subtotal, subtotal); // Add tax/discount logic later
+                Items = _invoiceItems,
+                DiscountPercent = nudDiscount.Value,
+                TaxPercent = nudTax.Value
+            };
+
+            UpdateTotals(invoice);
         }
 
         // Event Handler for saving an invoice
@@ -182,6 +190,9 @@ namespace LiteBiller.UI.Forms
             _invoiceItems.Clear();
             dgvItems.DataSource = null;
             dgvItems.Rows.Clear();
+
+            nudDiscount.Value = 0;
+            nudTax.Value = 0;
 
             lblInvoiceNo.Text = "Invoice #: -";
             lblSubtotal.Text = "Subtotal: $0.00";
@@ -232,6 +243,24 @@ namespace LiteBiller.UI.Forms
             }
 
             return true;
+        }
+
+        private void nudDiscountOrTax_ValueChanged(object sender, EventArgs e)
+        {
+            if (sender is NumericUpDown nud)
+            {
+                decimal value = nud.Value;
+
+                if (value < 0 || value > 100)
+                {
+                    _errorProvider.SetError(nud, "Value must be between 0 and 100%");
+                }
+                else
+                {
+                    _errorProvider.SetError(nud, string.Empty); // Clear error
+                    UpdateTotalLabels(); // Only update totals if input is valid
+                }
+            }
         }
     }
 }
