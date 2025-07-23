@@ -17,7 +17,7 @@ namespace LiteBiller.Data.Repositories
         }
 
         // Method to save an invoice and its line items
-        public Guid SaveInvoice(Invoice invoice)
+        public Invoice SaveInvoice(Invoice invoice)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -29,13 +29,15 @@ namespace LiteBiller.Data.Repositories
                     invoice.InvoiceId = Guid.NewGuid();
 
                     var cmd = new SqlCommand(@"
-                INSERT INTO Invoices (InvoiceId, CustomerName, InvoiceDate)
+                INSERT INTO Invoices (InvoiceId, InvoiceDate, CustomerName, DiscountPercent, TaxPercent)
                 OUTPUT INSERTED.InvoiceNo
-                VALUES (@InvoiceId, @CustomerName, @InvoiceDate)", conn, tran);
+                VALUES (@InvoiceId, @InvoiceDate, @CustomerName, @DiscountPercent, @TaxPercent)", conn, tran);
 
                     cmd.Parameters.AddWithValue("@InvoiceId", invoice.InvoiceId);
                     cmd.Parameters.AddWithValue("@CustomerName", invoice.CustomerName);
                     cmd.Parameters.AddWithValue("@InvoiceDate", invoice.InvoiceDate);
+                    cmd.Parameters.AddWithValue("@DiscountPercent", invoice.DiscountPercent);
+                    cmd.Parameters.AddWithValue("@TaxPercent", invoice.TaxPercent);
 
                     invoice.InvoiceNo = (long)cmd.ExecuteScalar(); // Fetch sequential number
 
@@ -66,7 +68,7 @@ namespace LiteBiller.Data.Repositories
                 }
             }
 
-            return invoice.InvoiceId;
+            return invoice;
         }
     }
 }

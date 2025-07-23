@@ -2,7 +2,9 @@
     InvoiceId UNIQUEIDENTIFIER PRIMARY KEY,
     InvoiceNo BIGINT IDENTITY(1,1) UNIQUE NOT NULL,
     CustomerName NVARCHAR(255) NOT NULL,
-    InvoiceDate DATETIME NOT NULL
+    InvoiceDate DATETIME NOT NULL,
+    DiscountPercent DECIMAL(5,2) NOT NULL DEFAULT 0,
+    TaxPercent DECIMAL(5,2) NOT NULL DEFAULT 0
 );
 
 CREATE TABLE InvoiceItems (

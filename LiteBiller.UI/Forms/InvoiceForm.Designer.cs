@@ -31,7 +31,13 @@
             this.lblSubtotal = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.lblInvoiceNo = new System.Windows.Forms.Label();
+            this.lblDiscount = new System.Windows.Forms.Label();
+            this.lblTax = new System.Windows.Forms.Label();
+            this.nudDiscount = new System.Windows.Forms.NumericUpDown();
+            this.nudTax = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDiscount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTax)).BeginInit();
             this.SuspendLayout();
             // 
             // lblCustomer
@@ -39,7 +45,7 @@
             this.lblCustomer.AutoSize = true;
             this.lblCustomer.Location = new System.Drawing.Point(20, 20);
             this.lblCustomer.Name = "lblCustomer";
-            this.lblCustomer.Size = new System.Drawing.Size(85, 13);
+            this.lblCustomer.Size = new System.Drawing.Size(107, 16);
             this.lblCustomer.TabIndex = 0;
             this.lblCustomer.Text = "Customer Name:";
             // 
@@ -47,7 +53,7 @@
             // 
             this.txtCustomerName.Location = new System.Drawing.Point(120, 17);
             this.txtCustomerName.Name = "txtCustomerName";
-            this.txtCustomerName.Size = new System.Drawing.Size(250, 20);
+            this.txtCustomerName.Size = new System.Drawing.Size(250, 22);
             this.txtCustomerName.TabIndex = 1;
             // 
             // lblDate
@@ -55,7 +61,7 @@
             this.lblDate.AutoSize = true;
             this.lblDate.Location = new System.Drawing.Point(20, 50);
             this.lblDate.Name = "lblDate";
-            this.lblDate.Size = new System.Drawing.Size(71, 13);
+            this.lblDate.Size = new System.Drawing.Size(85, 16);
             this.lblDate.TabIndex = 2;
             this.lblDate.Text = "Invoice Date:";
             // 
@@ -65,7 +71,7 @@
             this.dtpInvoiceDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpInvoiceDate.Location = new System.Drawing.Point(120, 47);
             this.dtpInvoiceDate.Name = "dtpInvoiceDate";
-            this.dtpInvoiceDate.Size = new System.Drawing.Size(250, 20);
+            this.dtpInvoiceDate.Size = new System.Drawing.Size(250, 22);
             this.dtpInvoiceDate.TabIndex = 3;
             this.dtpInvoiceDate.Value = new System.DateTime(2025, 4, 23, 1, 49, 0, 0);
             // 
@@ -77,13 +83,14 @@
             this.dgvItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvItems.Location = new System.Drawing.Point(20, 85);
             this.dgvItems.Name = "dgvItems";
-            this.dgvItems.Size = new System.Drawing.Size(600, 250);
+            this.dgvItems.RowHeadersWidth = 51;
+            this.dgvItems.Size = new System.Drawing.Size(762, 359);
             this.dgvItems.TabIndex = 5;
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.Location = new System.Drawing.Point(520, 350);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(682, 459);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 30);
             this.btnSave.TabIndex = 8;
@@ -93,22 +100,22 @@
             // 
             // lblSubtotal
             // 
-            this.lblSubtotal.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.lblSubtotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSubtotal.AutoSize = true;
-            this.lblSubtotal.Location = new System.Drawing.Point(20, 350);
+            this.lblSubtotal.Location = new System.Drawing.Point(20, 459);
             this.lblSubtotal.Name = "lblSubtotal";
-            this.lblSubtotal.Size = new System.Drawing.Size(64, 13);
+            this.lblSubtotal.Size = new System.Drawing.Size(76, 16);
             this.lblSubtotal.TabIndex = 6;
             this.lblSubtotal.Text = "Subtotal: $0";
             // 
             // lblTotal
             // 
-            this.lblTotal.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.lblTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTotal.AutoSize = true;
             this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.lblTotal.Location = new System.Drawing.Point(20, 370);
+            this.lblTotal.Location = new System.Drawing.Point(20, 479);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(58, 13);
+            this.lblTotal.Size = new System.Drawing.Size(73, 17);
             this.lblTotal.TabIndex = 7;
             this.lblTotal.Text = "Total: $0";
             // 
@@ -118,13 +125,57 @@
             this.lblInvoiceNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
             this.lblInvoiceNo.Location = new System.Drawing.Point(400, 20);
             this.lblInvoiceNo.Name = "lblInvoiceNo";
-            this.lblInvoiceNo.Size = new System.Drawing.Size(87, 15);
+            this.lblInvoiceNo.Size = new System.Drawing.Size(104, 18);
             this.lblInvoiceNo.TabIndex = 4;
             this.lblInvoiceNo.Text = "Invoice No: -";
             // 
+            // lblDiscount
+            // 
+            this.lblDiscount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblDiscount.AutoSize = true;
+            this.lblDiscount.Location = new System.Drawing.Point(212, 459);
+            this.lblDiscount.Name = "lblDiscount";
+            this.lblDiscount.Size = new System.Drawing.Size(77, 16);
+            this.lblDiscount.TabIndex = 9;
+            this.lblDiscount.Text = "Discount %:";
+            // 
+            // lblTax
+            // 
+            this.lblTax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTax.AutoSize = true;
+            this.lblTax.Location = new System.Drawing.Point(400, 459);
+            this.lblTax.Name = "lblTax";
+            this.lblTax.Size = new System.Drawing.Size(48, 16);
+            this.lblTax.TabIndex = 10;
+            this.lblTax.Text = "Tax %:";
+            // 
+            // nudDiscount
+            // 
+            this.nudDiscount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.nudDiscount.DecimalPlaces = 1;
+            this.nudDiscount.Location = new System.Drawing.Point(292, 458);
+            this.nudDiscount.Name = "nudDiscount";
+            this.nudDiscount.Size = new System.Drawing.Size(74, 22);
+            this.nudDiscount.TabIndex = 11;
+            this.nudDiscount.ValueChanged += new System.EventHandler(this.nudDiscountOrTax_ValueChanged);
+            // 
+            // nudTax
+            // 
+            this.nudTax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.nudTax.DecimalPlaces = 1;
+            this.nudTax.Location = new System.Drawing.Point(454, 457);
+            this.nudTax.Name = "nudTax";
+            this.nudTax.Size = new System.Drawing.Size(74, 22);
+            this.nudTax.TabIndex = 12;
+            this.nudTax.ValueChanged += new System.EventHandler(this.nudDiscountOrTax_ValueChanged);
+            // 
             // InvoiceForm
             // 
-            this.ClientSize = new System.Drawing.Size(650, 400);
+            this.ClientSize = new System.Drawing.Size(812, 509);
+            this.Controls.Add(this.nudTax);
+            this.Controls.Add(this.nudDiscount);
+            this.Controls.Add(this.lblTax);
+            this.Controls.Add(this.lblDiscount);
             this.Controls.Add(this.lblCustomer);
             this.Controls.Add(this.txtCustomerName);
             this.Controls.Add(this.lblDate);
@@ -138,9 +189,16 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LiteBiller - Create Invoice";
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDiscount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTax)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+
+        private System.Windows.Forms.Label lblDiscount;
+        private System.Windows.Forms.Label lblTax;
+        private System.Windows.Forms.NumericUpDown nudDiscount;
+        private System.Windows.Forms.NumericUpDown nudTax;
     }
 }

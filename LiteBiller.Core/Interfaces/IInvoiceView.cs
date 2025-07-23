@@ -30,6 +30,16 @@ namespace LiteBiller.Core.Interfaces
         List<InvoiceItem> InvoiceItems { get; }
 
         /// <summary>
+        /// Gets the discount percentage to be applied to the total price.
+        /// </summary>
+        decimal DiscountPercent { get; }
+
+        /// <summary>
+        /// Gets the tax percentage to be applied to the total amount.
+        /// </summary>
+        decimal TaxPercent { get; }
+
+        /// <summary>
         /// Sets the unique identifier for the invoice.
         /// </summary>
         /// <remarks>This method assigns a new identifier to the invoice. Ensure that the provided
@@ -51,13 +61,13 @@ namespace LiteBiller.Core.Interfaces
         void SetInvoiceItems(List<InvoiceItem> items);
 
         /// <summary>
-        /// Updates the subtotal and total values for the current transaction.
+        /// Updates the total amounts for the specified invoice, including any applicable taxes and discounts.
         /// </summary>
-        /// <remarks>This method is typically used to update the financial summary of a transaction. 
-        /// Ensure that both <paramref name="subtotal"/> and <paramref name="total"/> are non-negative values.</remarks>
-        /// <param name="subtotal">The subtotal amount, representing the sum of item prices before taxes and discounts.</param>
-        /// <param name="total">The total amount, representing the final amount after applying taxes and discounts.</param>
-        void UpdateTotals(decimal subtotal, decimal total);
+        /// <remarks>This method recalculates the total amounts for the provided invoice based on its
+        /// current line items,  tax rates, and discount rules. Ensure that the invoice contains valid data before
+        /// calling this method.</remarks>
+        /// <param name="invoice">The invoice to update. Must not be <see langword="null"/>.</param>
+        void UpdateTotals(Invoice invoice);
 
         /// <summary>
         /// Displays a message to the user in a message box with the specified icon.
