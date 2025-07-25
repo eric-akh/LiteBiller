@@ -1,0 +1,30 @@
+name: CD - All Tests
+
+on:
+  push:
+    tags:
+      - 'v*' # or use another trigger for deployment
+
+jobs:
+  test-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore packages
+      run: nuget restore LiteBiller.sln
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build
+      run: msbuild LiteBiller.sln /p:Configuration=Release
+
+    - name: Run All Tests (Unit + Integration)
+      run: |
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" ^
+        LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll

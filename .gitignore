@@ -1,5 +1,33 @@
+# Build results
 bin/
 obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+
+# Test artifacts
+TestResults/
+*.trx
+*.coverage
+*.testsettings
+
+# VS files
+.vs/
 *.user
 *.suo
-*.vs/
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Rider / Resharper
+.idea/
+*.sln.iml
+
+# Others
+*.dbmdl
+*.bak
