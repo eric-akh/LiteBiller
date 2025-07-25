@@ -28,6 +28,6 @@ jobs:
       - name: Run Unit Tests Only (Category=Unit)
         shell: pwsh
         run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
+            vstest.console.exe `
             "LiteBiller.Tests\bin\Debug\LiteBiller.Tests.dll" `
             /TestCaseFilter:"TestCategory=Unit"
