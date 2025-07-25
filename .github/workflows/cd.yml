@@ -25,7 +25,7 @@ jobs:
         run: msbuild LiteBiller.sln /p:Configuration=Release
 
       - name: Run All Tests (Unit + Integration)
-        shell: pwsh
-        run: |
-            vstest.console.exe `
-            "LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll"
+        uses: microsoft/vstest-action@v1
+        with:
+            testAssembly: '**\LiteBiller.Tests.dll'
+            searchFolder: 'LiteBiller.Tests\bin\Release'
