@@ -27,6 +27,9 @@ jobs:
       - name: Run All Tests (Unit + Integration)
         shell: pwsh
         run: |
-          $vstest = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe"
-          & "$vstest" `
+            $vstestPath = Get-ChildItem -Path "C:\" -Recurse -Filter "vstest.console.exe" -ErrorAction SilentlyContinue -Force -File | Select-Object -First 1 -ExpandProperty FullName
+            if (-not $vstestPath) {
+            throw "vstest.console.exe not found."
+            }
+            & "$vstestPath" `
             "LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll"
