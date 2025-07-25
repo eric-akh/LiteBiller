@@ -26,8 +26,9 @@ jobs:
         run: msbuild LiteBiller.sln /p:Configuration=Debug
 
       - name: Run Unit Tests Only (Category=Unit)
-        uses: microsoft/vstest-action@v1
-        with:
-            testAssembly: '**\LiteBiller.Tests.dll'
-            searchFolder: 'LiteBiller.Tests\bin\Debug'
-            testFiltercriteria: 'TestCategory=Unit'
+        shell: pwsh
+        run: |
+          $vstest = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe"
+          & "$vstest" `
+            "LiteBiller.Tests\bin\Debug\LiteBiller.Tests.dll" `
+            /TestCaseFilter:"TestCategory=Unit"
