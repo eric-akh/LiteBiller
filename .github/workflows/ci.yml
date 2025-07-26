@@ -25,12 +25,9 @@ jobs:
     - name: Build
       run: msbuild LiteBiller.sln /p:Configuration=Debug
 
-    - name: Locate vstest.console.exe (deep search)
+    - name: Run Unit Tests Only (Category=Unit)
       shell: pwsh
       run: |
-          $vstestPath = Get-ChildItem -Path C:\ -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue -Force -Depth 6 | Select-Object -First 1
-          if ($vstestPath) {
-          Write-Host "vstest.console.exe found at: $($vstestPath.FullName)"
-          } else {
-          Write-Host "::error::vstest.console.exe not found."
-          }
+        & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
+        LiteBiller.Tests\bin\Debug\LiteBiller.Tests.dll `
+        /TestCaseFilter:"TestCategory=Unit"
