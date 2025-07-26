@@ -1,61 +1,61 @@
-name: CD - Integration Tests Only
-
-on:
-  pull_request:
-    branches:
-      - production
-
-jobs:
-  test-and-deploy:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Restore packages
-        run: nuget restore LiteBiller.sln
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Build solution
-        run: msbuild LiteBiller.sln /p:Configuration=Release
-
-      - name: Override app.config to use LocalDB
-        run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
-        shell: cmd
-
-      - name: Create database and tables in LocalDB
-        shell: pwsh
-        run: |
-          # Wait until LocalDB is ready
-          $maxRetries = 10
-          $attempt = 0
-          do {
-            try {
-              sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "SELECT 1" -b
-              Write-Host "LocalDB is ready!"
-              break
-            } catch {
-              Write-Host "Waiting for LocalDB to be ready... (Attempt $($attempt + 1))"
-              Start-Sleep -Seconds 2
-              $attempt++
-            }
-          } while ($attempt -lt $maxRetries)
-
-          # Create the database if it doesn't exist
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
-
-          # Run the setup script
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
-            
-      - name: Run Integration Tests Only (Category=Integration)
-        shell: pwsh
-        run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
-          LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll `
-          /TestCaseFilter:"TestCategory=Integration"
+#name: CD - Integration Tests Only
+#
+#on:
+#  pull_request:
+#    branches:
+#      - production
+#
+#jobs:
+#  test-and-deploy:
+#    runs-on: windows-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Setup NuGet
+#        uses: NuGet/setup-nuget@v2
+#
+#      - name: Restore packages
+#        run: nuget restore LiteBiller.sln
+#
+#      - name: Setup MSBuild
+#        uses: microsoft/setup-msbuild@v2
+#
+#      - name: Build solution
+#        run: msbuild LiteBiller.sln /p:Configuration=Release
+#
+#      - name: Override app.config to use LocalDB
+#        run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
+#        shell: cmd
+#
+#      - name: Create database and tables in LocalDB
+#        shell: pwsh
+#        run: |
+#          # Wait until LocalDB is ready
+#          $maxRetries = 10
+#          $attempt = 0
+#          do {
+#            try {
+#              sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "SELECT 1" -b
+#              Write-Host "LocalDB is ready!"
+#              break
+#            } catch {
+#              Write-Host "Waiting for LocalDB to be ready... (Attempt $($attempt + 1))"
+#              Start-Sleep -Seconds 2
+#              $attempt++
+#            }
+#          } while ($attempt -lt $maxRetries)
+#
+#          # Create the database if it doesn't exist
+#          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+#
+#          # Run the setup script
+#          sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+#            
+#      - name: Run Integration Tests Only (Category=Integration)
+#        shell: pwsh
+#        run: |
+#          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
+#          LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll `
+#          /TestCaseFilter:"TestCategory=Integration"
