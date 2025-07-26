@@ -131,7 +131,7 @@
     <Compile Include="Validators\InvoiceValidatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app-cd-docker.config" />
+    <None Include="app-cd-localdb.config" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

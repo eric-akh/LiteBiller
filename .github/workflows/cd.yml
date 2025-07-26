@@ -9,20 +9,6 @@ jobs:
   test-and-deploy:
     runs-on: windows-latest
 
-    services:
-      sql:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        env:
-          SA_PASSWORD: "Your_password123"
-          ACCEPT_EULA: "Y"
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd "exit 0"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -39,23 +25,20 @@ jobs:
     - name: Build solution
       run: msbuild LiteBiller.sln /p:Configuration=Release
 
-    - name: Wait for SQL Server to be ready
-      shell: pwsh
+    - name: Install SQL Server LocalDB
       run: |
-        Write-Host "Waiting for SQL Server to be ready..."
-        Start-Sleep -Seconds 15
+        choco install sql-server-express -y
+        sqllocaldb create "MSSQLLocalDB"
+        sqllocaldb start "MSSQLLocalDB"
 
-    - name: Create LiteBiller database
-      run: |
-        sqlcmd -S localhost -U sa -P Your_password123 -Q "CREATE DATABASE LiteBiller"
-
-    - name: Override app.config for CD (Docker connection)
-      run: copy LiteBiller.Tests\app-cd-docker.config LiteBiller.Tests\app.config
+    - name: Override app.config for CD
+      run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
       shell: cmd
 
-    - name: Run setup script to create tables
+    - name: Create LiteBiller database and tables
       run: |
-        sqlcmd -S localhost -U sa -P Your_password123 -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+        sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+        sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
 
     - name: Run all tests (Unit + Integration)
       shell: pwsh
