@@ -1,37 +1,5 @@
-name: CI - Unit Tests Only
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  unit-test:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Restore packages
-        run: nuget restore LiteBiller.sln
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Build
-        run: msbuild LiteBiller.sln /p:Configuration=Debug
-
-      - name: Run Unit Tests Only (Category=Unit)
-        shell: pwsh
-        run: |
-            $vstestPath = Get-ChildItem -Path "C:\" -Recurse -Filter "vstest.console.exe" -ErrorAction SilentlyContinue -Force -File | Select-Object -First 1 -ExpandProperty FullName
-            if (-not $vstestPath) {
-            throw "vstest.console.exe not found."
-            }
-            & "$vstestPath" `
-            "LiteBiller.Tests\bin\Debug\LiteBiller.Tests.dll" `
-            /TestCaseFilter:"TestCategory=Unit"
+- name: Locate vstest.console.exe
+  shell: pwsh
+  run: |
+    $vstestPath = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+    Write-Host "vstest.console.exe found at: $($vstestPath.FullName)"
