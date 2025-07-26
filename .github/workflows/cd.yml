@@ -10,38 +10,34 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
-    - name: Restore packages
-      run: nuget restore LiteBiller.sln
+      - name: Restore packages
+        run: nuget restore LiteBiller.sln
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-    - name: Build solution
-      run: msbuild LiteBiller.sln /p:Configuration=Release
+      - name: Build solution
+        run: msbuild LiteBiller.sln /p:Configuration=Release
 
-    - name: Install SQL Server LocalDB
-      run: |
-        choco install sql-server-express -y
-        sqllocaldb create "MSSQLLocalDB"
-        sqllocaldb start "MSSQLLocalDB"
+      - name: Override app.config to use LocalDB
+        run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
+        shell: cmd
 
-    - name: Override app.config for CD
-      run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
-      shell: cmd
+      - name: Create database and tables in LocalDB
+        shell: pwsh
+        run: |
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
 
-    - name: Create LiteBiller database and tables
-      run: |
-        sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
-        sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
-
-    - name: Run all tests (Unit + Integration)
-      shell: pwsh
-      run: |
-        & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
-        LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll
+      - name: Run Integration tests
+        shell: pwsh
+        run: |
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
+          LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll `
+        /TestCaseFilter:"TestCategory=Integration"
