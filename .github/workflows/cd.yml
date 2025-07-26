@@ -1,7 +1,7 @@
-name: CD - All Tests on Production Push
+name: CD - All Tests
 
 on:
-  push:
+  pull_request:
     branches:
       - production
 
@@ -10,22 +10,39 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
 
-      - name: Restore packages
-        run: nuget restore LiteBiller.sln
+    - name: Restore packages
+      run: nuget restore LiteBiller.sln
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-      - name: Build
-        run: msbuild LiteBiller.sln /p:Configuration=Release
+    - name: Build solution
+      run: msbuild LiteBiller.sln /p:Configuration=Release
 
-      - name: Run All Tests (Unit + Integration)
-        shell: pwsh
-        run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
-          LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll
+    - name: Setup SQL Server Express and create database
+      shell: pwsh
+      run: |
+        Start-Service MSSQL$SQLEXPRESS
+        sqlcmd -S ".\SQLEXPRESS" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+
+    # Override app.config to point to SQL Express on GitHub runner
+    - name: Override app.config for CD
+      run: copy LiteBiller.Tests\app-cd.config LiteBiller.Tests\app.config
+      shell: cmd+
+
+    - name: Run SQL table creation script
+      shell: pwsh
+      run: |
+        sqlcmd -S ".\SQLEXPRESS" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+    
+    - name: Run all tests (Unit + Integration)
+      shell: pwsh
+      run: |
+        & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
+        LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll

@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="app-cd.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +148,9 @@
       <Project>{2dae162f-0876-4650-8471-3f13b06b84bd}</Project>
       <Name>LiteBiller.UI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sql\setup.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
