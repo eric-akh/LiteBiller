@@ -25,8 +25,12 @@ jobs:
     - name: Build
       run: msbuild LiteBiller.sln /p:Configuration=Debug
 
-    - name: Locate vstest.console.exe
+    - name: Locate vstest.console.exe (deep search)
       shell: pwsh
       run: |
-        $vstestPath = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1
-        Write-Host "vstest.console.exe found at: $($vstestPath.FullName)"
+          $vstestPath = Get-ChildItem -Path C:\ -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue -Force -Depth 6 | Select-Object -First 1
+          if ($vstestPath) {
+          Write-Host "vstest.console.exe found at: $($vstestPath.FullName)"
+          } else {
+          Write-Host "::error::vstest.console.exe not found."
+          }
