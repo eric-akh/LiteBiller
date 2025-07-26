@@ -66,3 +66,47 @@
 4. Create the database schema using the scripts/CreateTables.sql (or run your own CREATE TABLE statements based on the structure above).
 
 ⚠️ Make sure your connection string is defined in LiteBiller.UI\App.config under LiteBillerDb.
+
+---
+
+## 🔧 Running Locally
+
+1. Make sure SQL Server or SQL Server Express is installed.
+2. Open the solution in Visual Studio.
+3. Set up the `LiteBiller` database manually or use the test SQL script at `LiteBiller.Tests/sql/setup.sql`.
+4. Run the application.
+
+---
+
+## 📂 Project Structure
+
+- `LiteBiller.Core` – Business logic and models
+- `LiteBiller.Data` – Repositories and data access
+- `LiteBiller.UI` – Windows Forms UI
+- `LiteBiller.Tests` – Unit and integration tests
+
+---
+
+## 🧪 Testing Strategy
+
+### CI (Continuous Integration)
+- ✅ Unit tests are automatically run on every push and pull request to `main` via GitHub Actions.
+- Test Framework: **NUnit**
+- Test Runner: `vstest.console.exe`
+
+### CD (Continuous Deployment)
+- 🚫 **Temporarily disabled**
+- Previously configured to run both unit and integration tests on PRs to the `production` branch.
+
+---
+
+## 🧪 Testing Locally
+
+- Run all tests using the **Test Explorer** in Visual Studio.
+- For integration tests, ensure your local database is set up and matches the connection string in `app.config`.
+
+---
+
+## 📄 License
+
+This project is licensed for personal and educational use. Feel free to fork and explore.
