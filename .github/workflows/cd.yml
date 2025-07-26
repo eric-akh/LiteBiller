@@ -32,9 +32,27 @@ jobs:
       - name: Create database and tables in LocalDB
         shell: pwsh
         run: |
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+          # Wait until LocalDB is ready
+          $maxRetries = 10
+          $attempt = 0
+          do {
+            try {
+              sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "SELECT 1" -b
+              Write-Host "LocalDB is ready!"
+              break
+            } catch {
+              Write-Host "Waiting for LocalDB to be ready... (Attempt $($attempt + 1))"
+              Start-Sleep -Seconds 2
+              $attempt++
+            }
+          } while ($attempt -lt $maxRetries)
 
+          # Create the database if it doesn't exist
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+
+          # Run the setup script
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+            
       - name: Run Integration Tests Only (Category=Integration)
         shell: pwsh
         run: |
