@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, production ]
       
 jobs:
   unit-test:
-    if: github.base_ref != 'production' # 💥 Don't run if PR is to production
+    if: github.event_name == 'push' || github.base_ref != 'production'
         runs-on: windows-latest
     
         steps:
