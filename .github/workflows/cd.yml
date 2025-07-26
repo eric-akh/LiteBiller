@@ -1,4 +1,4 @@
-name: CD - All Tests
+name: CD - Integration Tests Only
 
 on:
   pull_request:
@@ -35,9 +35,9 @@ jobs:
           sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
           sqlcmd -S "(localdb)\MSSQLLocalDB" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
 
-      - name: Run Integration tests
+      - name: Run Integration Tests Only (Category=Integration)
         shell: pwsh
         run: |
           & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" `
           LiteBiller.Tests\bin\Release\LiteBiller.Tests.dll `
-        /TestCaseFilter:"TestCategory=Integration"
+          /TestCaseFilter:"TestCategory=Integration"
