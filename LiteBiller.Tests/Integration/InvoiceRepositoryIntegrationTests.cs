@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace LiteBiller.Tests.Integration
 {
-    [TestFixture]
+    [TestFixture, Category("Integration")]
     public class InvoiceRepositoryIntegrationTests
     {
         private string _connectionString;
