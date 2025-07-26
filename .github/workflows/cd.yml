@@ -25,22 +25,22 @@ jobs:
     - name: Build solution
       run: msbuild LiteBiller.sln /p:Configuration=Release
 
-    - name: Setup SQL Server Express and create database
+    - name: Start SQL LocalDB and create LiteBiller database
       shell: pwsh
       run: |
-        Start-Service MSSQL$SQLEXPRESS
-        sqlcmd -S ".\SQLEXPRESS" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
+        sqllocaldb create "LiteBillerInstance"
+        sqllocaldb start "LiteBillerInstance"
+        sqlcmd -S "(localdb)\LiteBillerInstance" -Q "IF DB_ID('LiteBiller') IS NULL CREATE DATABASE LiteBiller"
 
-    # Override app.config to point to SQL Express on GitHub runner
     - name: Override app.config for CD
-      run: copy LiteBiller.Tests\app-cd.config LiteBiller.Tests\app.config
-      shell: cmd+
+      run: copy LiteBiller.Tests\app-cd-localdb.config LiteBiller.Tests\app.config
+      shell: cmd
 
     - name: Run SQL table creation script
       shell: pwsh
       run: |
-        sqlcmd -S ".\SQLEXPRESS" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
-    
+        sqlcmd -S "(localdb)\LiteBillerInstance" -d LiteBiller -i LiteBiller.Tests\sql\setup.sql
+
     - name: Run all tests (Unit + Integration)
       shell: pwsh
       run: |
